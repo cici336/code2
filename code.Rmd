@@ -1,0 +1,167 @@
+---
+title: "Code for report "
+output: html_document
+---
+
+```{r}
+install.packages('tidyverse')
+library(tidyverse)
+
+```
+
+
+```{r}
+#Simulation of responses
+
+set.seed(7100086)
+sample <- tibble(
+   age = sample(x=c("18~29", "30~39", "40~49", "50+", "Refused to answer"),prob = c(0.15,0.2,0.2,0.35,0.1)  , size= 10000, replace=TRUE),
+   
+   education = sample(x=c("No formal schooling", "Secondary schooling", "High school diploma", "Some College, No Degree", "Bachelor Degree", "Master degree","Doctor degree","Refused to answer"), prob = c(0.05,0.05,0.1,0.25,0.3,0.1,0.05,0.1), size= 10000, replace=TRUE),
+   
+  first_language = sample(x=c("English", "French", "Neither English nor French", "Refused to answer"), prob = c(0.09,0.7,0.08,0.13), size= 10000, replace=TRUE),
+   
+   french_level = sample(x=c("Zero-based", "Beginner", "A little basic (European standard A1-A2)", "Good level (European standard B1-B2)", "More proficient (European standard C1-C2)", "French mother tongue", "Refused to answer"), prob = c(0.05,0.1,0.15,0.1,0.2,0.3,0.1), size= 10000, replace=TRUE),
+   
+   legal_status = sample(x=c("Yes", "No", "Refused to answer"), size= 10000, replace=TRUE),
+   
+   demo_identity = sample(x=c("East Asia",  "South Asia", "Europe", "North America", "South America", "Africa", "Refused to answer"), prob = c(0.015,0.015,0.8,0.03,0.04,0.04,0.06),size= 10000, replace=TRUE),
+   
+   vote_party = sample(x=c("Coalition Avenir Québec",  "Parti libéral du Québec", "Québec solidaire", "Parti québécois", "Haven't voted before", "Refused to answer"), prob = c(0.3,0.2,0.2,0.2,0.05,0.05), size= 10000, replace=TRUE),
+   
+   satisfied_leader = sample(x=c("1", "2", "3", "4", "Don't Know","Refused to answer"), prob = c(0.2,0.25,0.2,0.15,0.1,0.1), size= 10000, replace=TRUE),
+   
+   satisfied_party = sample(x=c("1", "2", "3", "4", "Don't Know","Refused to answer"), size= 10000, prob = c(0.25,0.25,0.15,0.15,0.1,0.1), replace=TRUE),
+   
+   satisfied = sample(x=c("Education","Environment", "Economic","Health care","Immigration policy","Crime control","Nothing","Refused to answer"), size=10000 , prob = c(0.15,0.15,0.25,0.15,0.1,0.1,0.05,0.05), replace=TRUE),
+   
+   improvement = sample(x=c("Education","Environment", "Economic","Health care","Immigration policy","Crime control","Nothing","Refused to answer"), size=10000 , prob = c(0.2,0.1,0.1,0.1,0.2,0.15,0.1,0.05), replace=TRUE),
+   
+   represents_views_well = sample(x=c("Yes","No","Don't know", "Refused to answer"), prob = c(0.4,0.3,0.2,0.1), size=10000 , replace=TRUE),
+   
+   not_vote  = sample(x=c("Coalition Avenir Québec","Parti libéral du Québec", "Québec solidaire","Parti québécois","Have no idea","Refused to answer"), size=10000 , replace=TRUE, prob = c(0.15,0.25,0.25,0.25,0.05,0.05)),
+   
+   vote_in_advance_poll = sample(x=c("Yes","Never voted before", "Refused to answer"), size=10000, prob = c(0.6,0.3,0.1), replace=TRUE),
+   
+   feel_satisfied = sample(x=c("Yes","No","Don't know", "Refused to answer"), size=10000 , replace=TRUE, prob = c(0.4,0.3,0.2,0.1)),
+   
+)
+```
+
+
+
+```{r}
+# This section investigates the frequencies of responses for each option in each question.
+as.data.frame(table(sample$age))
+as.data.frame(table(sample$education))
+as.data.frame(table(sample$first_language))
+as.data.frame(table(sample$french_level))
+as.data.frame(table(sample$legal_status))
+as.data.frame(table(sample$demo_identity))
+as.data.frame(table(sample$vote_party))
+as.data.frame(table(sample$satisfied_leader))
+as.data.frame(table(sample$satisfied))
+as.data.frame(table(sample$satisfied_party))
+as.data.frame(table(sample$improvement))
+as.data.frame(table(sample$represents_views_well))
+as.data.frame(table(sample$not_vote))
+as.data.frame(table(sample$vote_in_advance_poll))
+as.data.frame(table(sample$feel_satisfied))
+```
+
+
+
+
+```{r}
+# Get barplot for each survey question
+
+eduplot <- ggplot(sample,  aes(x=education)) +
+geom_bar(position=position_dodge(0.4),width=0.3,fill ="light blue") + theme_bw() +  
+   labs(x = "Education level",
+       y = "Number",
+       title = "Figure2: Distribution of the education level of 10000 respondents") 
+eduplot
+
+first_lan <- ggplot(sample)+geom_bar(aes(x=factor(1),fill=first_language))+coord_polar(theta="y")+   
+   labs(x = "count",
+       y = "Number",
+       title = "Figure3: Responses to 'What is your first language?' ") 
+first_lan
+
+voteplot <- ggplot(sample,  aes(x= vote_party )) +
+geom_bar(position=position_dodge(0.4),width=0.3,fill ="light blue") + theme_bw() +  
+   labs(x = "Responses",
+       y = "Number",
+       title = "Figure4: Distribution of responses to 'Which party did you vote for?'")
+voteplot
+
+
+# These 2 figures (5 and 6) investigate the Quebecers' level of satisfaction to the CAQ and the leader
+
+satifiedleader <- ggplot(sample,  aes(x=satisfied_leader)) +
+geom_bar(position=position_dodge(0.4),width=0.3,fill ="light blue") + theme_bw() +  
+   labs(x = "Satisfaction with the CAQ leader: François Legault",
+       y = "Number",
+       title = "Figure5: Responses to 'How do you feel François Legault?' ")
+
+satifiedparty <- ggplot(sample,  aes(x=satisfied_party)) +
+geom_bar(position=position_dodge(0.4),width=0.3,fill ="light blue") + theme_bw() +  
+   labs(x = "Satisfaction with the performance of the CAQ government",
+       y = "Number",
+       title = "Figure6: How satisfied were you with the performance of the CAQ government? ")
+satifiedleader
+satifiedparty
+
+impro <- ggplot(sample,  aes(x=improvement)) +
+geom_bar(position=position_dodge(0.4),width=0.3,fill ="light blue") + theme_bw() +  
+   labs(x = "Responses",
+       y = "Number of people",
+       title = "Figure7: Responses to 'What aspects do you think need improvement?' ")
+impro
+
+satisfied <- ggplot(sample,  aes(x=satisfied)) +
+geom_bar(position=position_dodge(0.4),width=0.3,fill ="light blue") + theme_bw() +  
+   labs(x = "Responses",
+       y = "Number of people",
+       title = "Figure8: Responses to 'What changes are you most satisfied with?' ")
+satisfied
+
+satisfiedf <- ggplot(sample,  aes(x=feel_satisfied)) +
+geom_bar(position=position_dodge(0.4),width=0.3,fill ="light blue") + theme_bw() +  
+   labs(x = "Responses",
+       y = "Number of people",
+       title = "Figure9: Responses about satisfaction with the CAQ's continued governance")
+satisfiedf
+
+```
+
+
+
+
+```{r}
+# Delete "refused to answer" in question 5: "legal status"
+
+sample$legal_status[sample$legal_status == "Refused to answer"] <- NA
+sample <- sample[complete.cases(sample),]
+
+
+
+# Combine respondents' legal status with their satisfaction with the CAQ's governance
+
+satisfiedcon <- ggplot(sample,  aes(x=feel_satisfied, condition=legal_status)) +
+geom_bar(position=position_dodge(0.4),width=0.3,fill ="light blue") + theme_bw() +  
+   labs(x = "Responses",
+       y = "Number of people",
+       title = "Respondents' attitude towards the CAQ's governance grouped by their legal status")
+satisfiedcon
+
+
+# Combine respondents' ages with their satisfaction with the CAQ's governance
+
+age_vs_satisfy <- ggplot(sample)+geom_bar(aes(x=feel_satisfied, fill=age))+coord_flip() + labs(x = "Age group",
+       y = "Number",
+       title = "Respondents' attitude towards the CAQ's governance grouped by ages") 
+age_vs_satisfy
+```
+
+
